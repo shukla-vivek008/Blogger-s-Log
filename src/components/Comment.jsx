@@ -1,5 +1,5 @@
 import { format } from "timeago.js";
-// import Image from "./Img.jsx";
+import Image from "./Image.jsx";
 import { useAuth, useUser } from "@clerk/clerk-react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-toastify";
@@ -37,7 +37,7 @@ const Comment = ({ comment, postId }) => {
     <div className="p-4 bg-slate-50 rounded-xl mb-8">
       <div className="flex items-center gap-4">
         {comment.user.img && (
-          <Image
+          <img
             src={comment.user.img}
             className="w-10 h-10 rounded-full object-cover"
             w="40"

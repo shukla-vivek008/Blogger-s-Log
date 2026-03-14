@@ -10,8 +10,6 @@ export const getPosts = async (req, res) => {
 
   const query = {};
 
-  console.log(req.query);
-
   const cat = req.query.cat;
   const author = req.query.author;
   const searchQuery = req.query.search;
@@ -65,7 +63,7 @@ export const getPosts = async (req, res) => {
   }
 
   const posts = await Post.find(query)
-    .populate("user", "username")
+    .populate("user", "username img")
     .sort(sortObj)
     .limit(limit)
     .skip((page - 1) * limit);
@@ -87,8 +85,6 @@ export const getPost = async (req, res) => {
 export const createPost = async (req, res) => {
 
 const { userId: clerkUserId } = getAuth(req);
-  
-  console.log("Clerk User:", clerkUserId);
 
   if (!clerkUserId) {
     return res.status(401).json("Not authenticated!");

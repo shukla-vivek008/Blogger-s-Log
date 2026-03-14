@@ -6,7 +6,7 @@ import { toast } from "react-toastify";
 
 const fetchComments = async (postId) => {
   const res = await axios.get(
-    `${import.meta.env.VITE_API_URL}/comments/${postId}`
+    `${import.meta.env.VITE_API_URL}/comments/${postId}`,
   );
   return res.data;
 };
@@ -32,7 +32,7 @@ const Comments = ({ postId }) => {
           headers: {
             Authorization: `Bearer ${token}`,
           },
-        }
+        },
       );
     },
     onSuccess: () => {
@@ -45,6 +45,12 @@ const Comments = ({ postId }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+
+    if (!user) {
+      toast.error("You must be logged in to comment");
+      return;
+    }
+
     const formData = new FormData(e.target);
 
     const data = {

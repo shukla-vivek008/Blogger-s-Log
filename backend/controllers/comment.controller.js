@@ -1,5 +1,6 @@
 import Comment from "../models/comment.model.js";
 import User from "../models/user.model.js";
+import { getAuth } from "@clerk/express";
 
 export const getPostComments = async (req, res) => {
   const comments = await Comment.find({ post: req.params.postId })
@@ -10,7 +11,7 @@ export const getPostComments = async (req, res) => {
 };
 
 export const addComment = async (req, res) => {
-  const clerkUserId = req.auth.userId;
+  const { userId: clerkUserId } = getAuth(req);
   const postId = req.params.postId;
 
   if (!clerkUserId) {
@@ -18,6 +19,10 @@ export const addComment = async (req, res) => {
   }
 
   const user = await User.findOne({ clerkUserId });
+
+  if (!user) {
+  return res.status(404).json("User not found");
+}
 
   const newComment = new Comment({
     ...req.body,
@@ -31,7 +36,7 @@ export const addComment = async (req, res) => {
 };
 
 export const deleteComment = async (req, res) => {
-  const clerkUserId = req.auth.userId;
+  const { userId: clerkUserId } = getAuth(req);
   const id = req.params.id;
 
   if (!clerkUserId) {
@@ -45,7 +50,7 @@ export const deleteComment = async (req, res) => {
     return res.status(200).json("Comment has been deleted");
   }
 
-  const user = User.findOne({ clerkUserId });
+  const user = await User.findOne({ clerkUserId });
 
   const deletedComment = await Comment.findOneAndDelete({
     _id: id,

@@ -9,24 +9,24 @@ const PostMenuActions = ({ post }) => {
   const { getToken } = useAuth();
   const navigate = useNavigate();
 
-  const {
-    isPending,
-    error,
-    data: savedPosts,
-  } = useQuery({
-    queryKey: ["savedPosts"],
-    queryFn: async () => {
-      const token = await getToken();
-      return axios.get(`${import.meta.env.VITE_API_URL}/users/saved`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-    },
-  });
+  const { isPending, error, data: savedPosts } = useQuery({
+  queryKey: ["savedPosts"],
+  queryFn: async () => {
+    const token = await getToken();
+    const res = await axios.get(`${import.meta.env.VITE_API_URL}/users/saved`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return res.data;
+  },
+});
 
-  const isAdmin = user?.publicMetadata?.role === "admin" || false;
-  const isSaved = savedPosts?.data?.some((p) => p === post._id) || false;
+  const isAdmin =
+  user?.publicMetadata?.role === "admin" ||
+  user?.unsafeMetadata?.role === "admin";
+  
+  const isSaved = savedPosts?.some((p) => p === post._id) || false;
 
   const deleteMutation = useMutation({
     mutationFn: async () => {

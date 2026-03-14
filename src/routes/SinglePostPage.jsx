@@ -141,12 +141,13 @@ const SinglePostPage = () => {
           <h1 className="mb-4 text-sm font-medium">Author</h1>
           <div className="flex flex-col gap-4">
             <div className="flex items-center gap-8">
+              {console.log(data.user.img)}
               {data.user.img && (
-                <Image
+                <img
                   src={data.user.img}
                   className="w-12 h-12 rounded-full object-cover"
-                  w="48"
-                  h="48"
+                  width={48}
+                  height={48}
                 />
               )}
               <Link className="text-blue-800">{data.user.username}</Link>
@@ -163,7 +164,7 @@ const SinglePostPage = () => {
               </Link>
             </div>
           </div>
-          <PostMenuActions post={data}/>
+          <PostMenuActions post={data} />
           <h1 className="mt-8 mb-4 text-sm font-medium">Categories</h1>
           <div className="flex flex-col gap-2 text-sm">
             <Link className="underline">All</Link>
@@ -187,7 +188,7 @@ const SinglePostPage = () => {
           <Search />
         </div>
       </div>
-      <Comments postId={data._id}/>
+      <Comments postId={data._id} />
     </div>
   );
 };
