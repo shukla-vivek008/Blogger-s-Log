@@ -1,140 +1,170 @@
-import { Link } from "react-router-dom";
-import Img from "../components/Img.jsx";
-import PostMenuActions from "../components/PostMenuActions.jsx";
-import Search from "../components/Search.jsx";
-import Comments from "../components/Comments.jsx";
+import { Link, useParams } from "react-router-dom";
+import Image from "../components/Image";
+import PostMenuActions from "../components/PostMenuActions";
+import Search from "../components/Search";
+import Comments from "../components/Comments";
+import axios from "axios";
+import { useQuery } from "@tanstack/react-query";
+import { format } from "timeago.js";
+
+const fetchPost = async (slug) => {
+  const res = await axios.get(`${import.meta.env.VITE_API_URL}/posts/${slug}`);
+  return res.data;
+};
 
 const SinglePostPage = () => {
+  const { slug } = useParams();
+
+  const { isPending, error, data } = useQuery({
+    queryKey: ["post", slug],
+    queryFn: () => fetchPost(slug),
+  });
+
+  if (isPending) return "loading...";
+  if (error) return "Something went wrong!" + error.message;
+  if (!data) return "Post not found!";
+
   return (
     <div className="flex flex-col gap-8">
-      {/* details */}
+      {/* detail */}
       <div className="flex gap-8">
         <div className="lg:w-3/5 flex flex-col gap-8">
-          <h1 className="text-xl md:text-3xl xl:text-4xl 2xl:text-5xl  font-semibold">
-            Lorem ipsum dolor sit amet consectetur, adipisicing elit. Enim saepe
-            deleniti harum.
+          <h1 className="text-xl md:text-3xl xl:text-4xl 2xl:text-5xl font-semibold">
+            {data.title}
           </h1>
           <div className="flex items-center gap-2 text-gray-400 text-sm">
             <span>Written by</span>
-            <Link className="text-blue-800">John Deo</Link>
+            <Link className="text-blue-800">{data.user.username}</Link>
             <span>on</span>
-            <Link className="text-blue-800">Web Design</Link>
-            <span>2 days ago</span>
+            <Link className="text-blue-800">{data.category}</Link>
+            <span>{format(data.createdAt)}</span>
           </div>
-          <p className="text-gray-500 font-medium">
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. At ut sint
-            aperiam sed porro, vel in nesciunt cumque repudiandae error
-            temporibus adipisci veritatis magni optio totam reprehenderit.
-            Dolor, odit minima!
-          </p>
+          <p className="text-gray-500 font-medium">{data.desc}</p>
         </div>
-        <div className="hidden lg:block w-2/5">
-          <Img src="postImg.jpeg" w="600" className="rounded-2xl" />
-        </div>
+        {data.img && (
+          <div className="hidden lg:block w-2/5">
+            <Image src={data.img} w="600" className="rounded-2xl" />
+          </div>
+        )}
       </div>
       {/* content */}
-      <div className="flex flex-col md:flex-row gap-8">
+      <div className="flex flex-col md:flex-row gap-12 justify-between">
         {/* text */}
-        <div className="lg:text-lg flex flex-col gap-7 text-justify">
+        <div className="lg:text-lg flex flex-col gap-6 text-justify">
           <p>
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Illo
-            consequuntur nobis inventore veniam modi sit ratione at. Tempore
-            dolorum distinctio recusandae a ab optio ex dignissimos iste
-            corrupti ipsum nulla quidem, alias officiis odit perferendis.
-            Cupiditate, debitis? Modi, saepe nisi accusamus odio eveniet
-            possimus obcaecati temporibus at, eum a magnam debitis culpa,
-            quisquam soluta atque eligendi fugiat? Aperiam placeat vero ad ex
-            vitae blanditiis voluptate odit ipsum tenetur a reprehenderit dolor
-            ullam quasi laudantium, dignissimos quis exercitationem, voluptas
-            impedit. Doloremque.
+            Lorem ipsum dolor sit amet consectetur adipisicing elit. Alias neque
+            fugiat itaque quas esse sunt cupiditate possimus cumque asperiores,
+            dolorem, dolores eligendi amet perferendis illum repellat nam quam
+            facilis veritatis. Lorem ipsum dolor sit amet consectetur
+            adipisicing elit. Sint ipsa fuga nihil numquam, quam dicta quas
+            exercitationem aliquam maxime quaerat, enim autem culpa sequi at!
+            Earum facere in ducimus culpa. Lorem ipsum dolor sit amet
+            consectetur, adipisicing elit. Libero fuga modi amet error aliquid
+            eos nobis vero soluta facilis, voluptatem, voluptates quod suscipit
+            obcaecati voluptate quaerat laborum, voluptatum dicta ipsum.
           </p>
           <p>
-            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nostrum
-            ipsam asperiores dolorum quisquam ad nemo repellendus qui? Optio
-            obcaecati cupiditate veniam iste magnam doloribus saepe sunt,
-            dolorum nesciunt odit eum dignissimos earum dolore non dolores
-            praesentium porro vel atque impedit facilis natus exercitationem
-            debitis eius! Culpa natus in harum debitis? Laudantium sed adipisci
-            quo amet asperiores molestiae sequi itaque! Sint perspiciatis
-            quibusdam fuga, asperiores odio obcaecati expedita ipsum,
-            exercitationem odit hic nam unde. Accusamus quia excepturi quae
-            dignissimos tenetur praesentium?
+            Lorem ipsum dolor sit amet consectetur adipisicing elit. Alias neque
+            fugiat itaque quas esse sunt cupiditate possimus cumque asperiores,
+            dolorem, dolores eligendi amet perferendis illum repellat nam quam
+            facilis veritatis. Lorem ipsum dolor sit amet consectetur
+            adipisicing elit. Sint ipsa fuga nihil numquam, quam dicta quas
+            exercitationem aliquam maxime quaerat, enim autem culpa sequi at!
+            Earum facere in ducimus culpa. Lorem ipsum dolor sit amet
+            consectetur, adipisicing elit. Libero fuga modi amet error aliquid
+            eos nobis vero soluta facilis, voluptatem, voluptates quod suscipit
+            obcaecati voluptate quaerat laborum, voluptatum dicta ipsum.
           </p>
           <p>
-            Lorem ipsum dolor sit, amet consectetur adipisicing elit. Delectus
-            minima quas omnis, minus corrupti optio at veniam blanditiis quis
-            earum, inventore, iure incidunt molestias! A libero quidem vitae
-            voluptatem deserunt explicabo ullam temporibus. Excepturi, sapiente.
-            Possimus sed, officia dolorem odit vel deleniti, iusto ipsa et quo
-            labore, maxime quasi delectus enim perferendis. Fugit nam delectus
-            amet quos fuga id minus rerum, veniam voluptatibus dolorum odit
-            maxime similique sit natus excepturi fugiat ipsum dicta architecto
-            nemo earum adipisci perferendis molestias veritatis.
+            Lorem ipsum dolor sit amet consectetur adipisicing elit. Alias neque
+            fugiat itaque quas esse sunt cupiditate possimus cumque asperiores,
+            dolorem, dolores eligendi amet perferendis illum repellat nam quam
+            facilis veritatis. Lorem ipsum dolor sit amet consectetur
+            adipisicing elit. Sint ipsa fuga nihil numquam, quam dicta quas
+            exercitationem aliquam maxime quaerat, enim autem culpa sequi at!
+            Earum facere in ducimus culpa. Lorem ipsum dolor sit amet
+            consectetur, adipisicing elit. Libero fuga modi amet error aliquid
+            eos nobis vero soluta facilis, voluptatem, voluptates quod suscipit
+            obcaecati voluptate quaerat laborum, voluptatum dicta ipsum.
           </p>
           <p>
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Illo
-            consequuntur nobis inventore veniam modi sit ratione at. Tempore
-            dolorum distinctio recusandae a ab optio ex dignissimos iste
-            corrupti ipsum nulla quidem, alias officiis odit perferendis.
-            Cupiditate, debitis? Modi, saepe nisi accusamus odio eveniet
-            possimus obcaecati temporibus at, eum a magnam debitis culpa,
-            quisquam soluta atque eligendi fugiat? Aperiam placeat vero ad ex
-            vitae blanditiis voluptate odit ipsum tenetur a reprehenderit dolor
-            ullam quasi laudantium, dignissimos quis exercitationem, voluptas
-            impedit. Doloremque.
+            Lorem ipsum dolor sit amet consectetur adipisicing elit. Alias neque
+            fugiat itaque quas esse sunt cupiditate possimus cumque asperiores,
+            dolorem, dolores eligendi amet perferendis illum repellat nam quam
+            facilis veritatis. Lorem ipsum dolor sit amet consectetur
+            adipisicing elit. Sint ipsa fuga nihil numquam, quam dicta quas
+            exercitationem aliquam maxime quaerat, enim autem culpa sequi at!
+            Earum facere in ducimus culpa. Lorem ipsum dolor sit amet
+            consectetur, adipisicing elit. Libero fuga modi amet error aliquid
+            eos nobis vero soluta facilis, voluptatem, voluptates quod suscipit
+            obcaecati voluptate quaerat laborum, voluptatum dicta ipsum.
           </p>
           <p>
-            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nostrum
-            ipsam asperiores dolorum quisquam ad nemo repellendus qui? Optio
-            obcaecati cupiditate veniam iste magnam doloribus saepe sunt,
-            dolorum nesciunt odit eum dignissimos earum dolore non dolores
-            praesentium porro vel atque impedit facilis natus exercitationem
-            debitis eius! Culpa natus in harum debitis? Laudantium sed adipisci
-            quo amet asperiores molestiae sequi itaque! Sint perspiciatis
-            quibusdam fuga, asperiores odio obcaecati expedita ipsum,
-            exercitationem odit hic nam unde. Accusamus quia excepturi quae
-            dignissimos tenetur praesentium?
+            Lorem ipsum dolor sit amet consectetur adipisicing elit. Alias neque
+            fugiat itaque quas esse sunt cupiditate possimus cumque asperiores,
+            dolorem, dolores eligendi amet perferendis illum repellat nam quam
+            facilis veritatis. Lorem ipsum dolor sit amet consectetur
+            adipisicing elit. Sint ipsa fuga nihil numquam, quam dicta quas
+            exercitationem aliquam maxime quaerat, enim autem culpa sequi at!
+            Earum facere in ducimus culpa. Lorem ipsum dolor sit amet
+            consectetur, adipisicing elit. Libero fuga modi amet error aliquid
+            eos nobis vero soluta facilis, voluptatem, voluptates quod suscipit
+            obcaecati voluptate quaerat laborum, voluptatum dicta ipsum.
           </p>
           <p>
-            Lorem ipsum dolor sit, amet consectetur adipisicing elit. Delectus
-            minima quas omnis, minus corrupti optio at veniam blanditiis quis
-            earum, inventore, iure incidunt molestias! A libero quidem vitae
-            voluptatem deserunt explicabo ullam temporibus. Excepturi, sapiente.
-            Possimus sed, officia dolorem odit vel deleniti, iusto ipsa et quo
-            labore, maxime quasi delectus enim perferendis. Fugit nam delectus
-            amet quos fuga id minus rerum, veniam voluptatibus dolorum odit
-            maxime similique sit natus excepturi fugiat ipsum dicta architecto
-            nemo earum adipisci perferendis molestias veritatis.
+            Lorem ipsum dolor sit amet consectetur adipisicing elit. Alias neque
+            fugiat itaque quas esse sunt cupiditate possimus cumque asperiores,
+            dolorem, dolores eligendi amet perferendis illum repellat nam quam
+            facilis veritatis. Lorem ipsum dolor sit amet consectetur
+            adipisicing elit. Sint ipsa fuga nihil numquam, quam dicta quas
+            exercitationem aliquam maxime quaerat, enim autem culpa sequi at!
+            Earum facere in ducimus culpa. Lorem ipsum dolor sit amet
+            consectetur, adipisicing elit. Libero fuga modi amet error aliquid
+            eos nobis vero soluta facilis, voluptatem, voluptates quod suscipit
+            obcaecati voluptate quaerat laborum, voluptatum dicta ipsum.
+          </p>
+          <p>
+            Lorem ipsum dolor sit amet consectetur adipisicing elit. Alias neque
+            fugiat itaque quas esse sunt cupiditate possimus cumque asperiores,
+            dolorem, dolores eligendi amet perferendis illum repellat nam quam
+            facilis veritatis. Lorem ipsum dolor sit amet consectetur
+            adipisicing elit. Sint ipsa fuga nihil numquam, quam dicta quas
+            exercitationem aliquam maxime quaerat, enim autem culpa sequi at!
+            Earum facere in ducimus culpa. Lorem ipsum dolor sit amet
+            consectetur, adipisicing elit. Libero fuga modi amet error aliquid
+            eos nobis vero soluta facilis, voluptatem, voluptates quod suscipit
+            obcaecati voluptate quaerat laborum, voluptatum dicta ipsum.
           </p>
         </div>
         {/* menu */}
         <div className="px-4 h-max sticky top-8">
           <h1 className="mb-4 text-sm font-medium">Author</h1>
           <div className="flex flex-col gap-4">
-            <div className="flex items-center gap-12">
-              <Img
-                src="userImg.jpeg"
-                className="w-12 h-12 rounded-full object-cover"
-                w="48"
-                h="48"
-              />
-              <Link className="text-blue-800">John Doe</Link>
+            <div className="flex items-center gap-8">
+              {data.user.img && (
+                <Image
+                  src={data.user.img}
+                  className="w-12 h-12 rounded-full object-cover"
+                  w="48"
+                  h="48"
+                />
+              )}
+              <Link className="text-blue-800">{data.user.username}</Link>
             </div>
             <p className="text-sm text-gray-500">
-              Lorem ipsum dolor, sit amet consectetur adipisicing elit.
-              Deserunt, et.
+              Lorem ipsum dolor sit amet consectetur
             </p>
             <div className="flex gap-2">
               <Link>
-                <Img src="facebook.svg" />
+                <Image src="facebook.svg" />
               </Link>
               <Link>
-                <Img src="instagram.svg" />
+                <Image src="instagram.svg" />
               </Link>
             </div>
           </div>
-          <PostMenuActions />
-          <h1 className="mb-4 text-sm font-medium">Categories</h1>
+          <PostMenuActions post={data}/>
+          <h1 className="mt-8 mb-4 text-sm font-medium">Categories</h1>
           <div className="flex flex-col gap-2 text-sm">
             <Link className="underline">All</Link>
             <Link className="underline" to="/">
@@ -157,7 +187,7 @@ const SinglePostPage = () => {
           <Search />
         </div>
       </div>
-      <Comments/>
+      <Comments postId={data._id}/>
     </div>
   );
 };
