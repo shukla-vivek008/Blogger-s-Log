@@ -1,6 +1,8 @@
 import ImageKit from "imagekit";
 import Post from "../models/post.model.js";
 import User from "../models/user.model.js";
+import { getAuth } from "@clerk/express";
+
 
 export const getPosts = async (req, res) => {
   const page = parseInt(req.query.page) || 1;
@@ -83,9 +85,10 @@ export const getPost = async (req, res) => {
 };
 
 export const createPost = async (req, res) => {
-  const clerkUserId = req.auth.userId;
 
-  console.log(req.headers);
+const { userId: clerkUserId } = getAuth(req);
+  
+  console.log("Clerk User:", clerkUserId);
 
   if (!clerkUserId) {
     return res.status(401).json("Not authenticated!");
@@ -97,7 +100,7 @@ export const createPost = async (req, res) => {
     return res.status(404).json("User not found!");
   }
 
-  let slug = req.body.title.replace(/ /g, "-").toLowerCase();
+  let slug = req.body.title.replace(/\s+/g, "-").toLowerCase();
 
   let existingPost = await Post.findOne({ slug });
 
@@ -116,7 +119,9 @@ export const createPost = async (req, res) => {
 };
 
 export const deletePost = async (req, res) => {
-  const clerkUserId = req.auth.userId;
+  const { userId: clerkUserId } = getAuth(req);
+
+  console.log("Clerk User:", clerkUserId);
 
   if (!clerkUserId) {
     return res.status(401).json("Not authenticated!");
@@ -144,7 +149,7 @@ export const deletePost = async (req, res) => {
 };
 
 export const featurePost = async (req, res) => {
-  const clerkUserId = req.auth.userId;
+  const { userId: clerkUserId } = getAuth(req);
   const postId = req.body.postId;
 
   if (!clerkUserId) {

@@ -40,27 +40,24 @@ export const clerkWebHook = async (req, res) => {
 
   console.log("Webhook event:", evt.type);
   console.log("User data:", evt.data);
+  
+ if (evt.type === "user.created") {
+  const existingUser = await User.findOne({ clerkUserId: evt.data.id });
 
-  if (evt.type === "user.created") {
-    const email = evt.data.email_addresses[0].email_address;
-    const existingUser = await User.findOne({ email });
-    if (!existingUser) {
-      const newUser = new User({
-        clerkUserId: evt.data.id,
-        username:
-          evt.data.username ||
-          evt.data.first_name ||
-          evt.data.email_addresses[0].email_address.split("@")[0],
-        email: evt.data.email_addresses[0].email_address,
-        img: evt.data.profile_image_url,
-      });
-    }
-  }
-  try {
+  if (!existingUser) {
+    const newUser = new User({
+      clerkUserId: evt.data.id,
+      username:
+        evt.data.username ||
+        evt.data.first_name ||
+        evt.data.email_addresses[0].email_address.split("@")[0],
+      email: evt.data.email_addresses[0].email_address,
+      img: evt.data.profile_image_url,
+    });
+
     await newUser.save();
-  } catch (err) {
-    console.error(err);
   }
+}
 
   if (evt.type === "user.deleted") {
   const deletedUser = await User.findOneAndDelete({
