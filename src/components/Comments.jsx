@@ -57,6 +57,8 @@ const Comments = ({ postId }) => {
       desc: formData.get("desc"),
     };
 
+    e.target.reset();
+
     mutation.mutate(data);
   };
 
